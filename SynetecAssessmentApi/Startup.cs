@@ -6,6 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SynetecAssessmentApi.Persistence;
+using SynetecAssessmentApi.Application.Services;
+using SynetecAssessmentApi.Application.Providers;
+using SynetecAssessmentApi.Application.Validators;
+using SynetecAssessmentApi.Application.Mappers;
 
 namespace SynetecAssessmentApi
 {
@@ -27,8 +31,14 @@ namespace SynetecAssessmentApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SynetecAssessmentApi", Version = "v1" });
             });
 
+            services.AddScoped<IBonusPoolService, BonusPoolService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IBonusCalculator, SimpleBonusCalculator>();
+            services.AddScoped<CalculateBonusDtoValidator>();
+            services.AddAutoMapper(typeof(DepartmentProfile).Assembly); //assembly of the application layer
+            
             services.AddDbContext<AppDbContext>(options =>
-                options.UseInMemoryDatabase(databaseName: "HrDb"));
+            options.UseInMemoryDatabase(databaseName: "HrDb"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
